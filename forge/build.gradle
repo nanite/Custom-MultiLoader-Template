@@ -1,12 +1,9 @@
 plugins {
     id 'idea'
-    id 'maven-publish'
     id 'net.minecraftforge.gradle'
     id 'org.spongepowered.mixin'
 }
-base {
-    archivesName = "${mod_name}-forge-${minecraft_version}"
-}
+
 mixin {
     add(sourceSets.main, "${mod_id}.refmap.json")
 
@@ -75,7 +72,7 @@ sourceSets.main.resources.srcDir 'src/generated/resources'
 dependencies {
     minecraft "net.minecraftforge:forge:${minecraft_version}-${forge_version}"
     compileOnly project(":common")
-    annotationProcessor("org.spongepowered:mixin:0.8.5-SNAPSHOT:processor")
+    annotationProcessor("org.spongepowered:mixin:0.8.5:processor")
 }
 
 tasks.withType(JavaCompile).configureEach {
@@ -100,11 +97,6 @@ publishing {
             artifactId base.archivesName.get()
             from components.java
             fg.component(it)
-        }
-    }
-    repositories {
-        maven {
-            url "file://" + System.getenv("local_maven")
         }
     }
 }

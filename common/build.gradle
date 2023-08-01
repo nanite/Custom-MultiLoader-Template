@@ -1,22 +1,26 @@
 plugins {
     id 'idea'
     id 'java'
-    id 'maven-publish'
-    id 'org.spongepowered.gradle.vanilla'
-}
-base {
-    archivesName = "${mod_name}-common-${minecraft_version}"
-}
-minecraft {
-    version(minecraft_version)
-    if(file("src/main/resources/${mod_id}.accesswidener").exists()){
-        accessWideners(file("src/main/resources/${mod_id}.accesswidener"))
-    }
+    id 'fabric-loom'
 }
 
 dependencies {
-     compileOnly group:'org.spongepowered', name:'mixin', version:'0.8.5'
-     implementation group: 'com.google.code.findbugs', name: 'jsr305', version: '3.0.1'
+    minecraft "com.mojang:minecraft:${minecraft_version}"
+    mappings loom.officialMojangMappings()
+    compileOnly group: 'org.spongepowered', name: 'mixin', version: '0.8.5'
+}
+
+repositories {
+    maven {
+        name = 'Creeperhost'
+        url = 'https://maven.creeperhost.net/'
+    }
+}
+
+loom {
+    if (project(":common").file("src/main/resources/${mod_id}.accesswidener").exists()) {
+        accessWidenerPath.set(project(":common").file("src/main/resources/${mod_id}.accesswidener"))
+    }
 }
 
 publishing {
@@ -24,11 +28,6 @@ publishing {
         mavenJava(MavenPublication) {
             artifactId base.archivesName.get()
             from components.java
-        }
-    }
-    repositories {
-        maven {
-            url "file://" + System.getenv("local_maven")
         }
     }
 }
