@@ -92,40 +92,46 @@ publishMods {
     changelog = file("./CHANGELOG.md").text
     type = STABLE
 
-    def options = curseforgeOptions {
-        projectId = "${curseforge_id}"
-        accessToken = providers.environmentVariable("CURSE_TOKEN")
-        minecraftVersions.add("${minecraft_version}")
+    def makeOptions = { String name, boolean isCurse ->
+        def options = (isCurse ? curseforgeOptions {} : modrinthOptions {}).get()
+        options.minecraftVersions.add("${minecraft_version}")
+        options.projectId = isCurse ? "${curseforge_id}" : "${modrinth_id}"
+        options.accessToken = providers.environmentVariable(isCurse ? "CURSE_TOKEN" : "MODRINTH_TOKEN")
+        options.displayName = "${project.name} ${name[0].toUpperCase() + name.substring(1)} ${mod_version}+mc${minecraft_version}"
+        options.file = project.provider { project(":${name}").tasks.remapJar }.flatMap { it.archiveFile }
+        options.modLoaders.add("Java 17")
+        options.modLoaders.add("${name}")
+        return options
     }
+
     curseforge("curseforgeForge") {
-        from options
-        displayName = "${project.name} Forge ${mod_version}+mc${minecraft_version}"
-        file = project.provider { project(":forge").tasks.jar }.flatMap { it.archiveFile }
-        modLoaders.add("forge")
-        modLoaders.add("Java 17")
+        from makeOptions("forge", true)
     }
 
     curseforge("curseforgeFabric") {
-        from options
-        displayName = "${project.name} Fabric ${mod_version}+mc${minecraft_version}"
-        file = project.provider { project(":fabric").tasks.remapJar }.flatMap { it.archiveFile }
-        modLoaders.add("fabric")
-        modLoaders.add("Java 17")
+        from makeOptions("fabric", true)
 
         requires {
             slug = "fabric-api"
         }
-
     }
 
-    modrinth {
-        projectId = "abcdef"
-        accessToken = providers.environmentVariable("MODRINTH_TOKEN")
-        minecraftVersions.add("1.20.1")
-    }
+//    modrinth("modrinthForge") {
+//        featured = true
+//        from makeOptions("forge", false)
+//    }
+//
+//    modrinth("modrinthFabric") {
+//        featured = true
+//        from makeOptions("fabric", false)
+//
+//        requires {
+//            projectId = "P7dR8mSH" // Fabric api
+//        }
+//    }
 
     github {
-        file = project.provider { project(":forge").tasks.jar }.flatMap { it.archiveFile }
+        file = project.provider { project(":forge").tasks.remapJar }.flatMap { it.archiveFile }
         additionalFiles.from project.provider { project(":fabric").tasks.remapJar }.flatMap { it.archiveFile }
         repository = "${github_repo}"
         accessToken = providers.environmentVariable("GITHUB_TOKEN")
