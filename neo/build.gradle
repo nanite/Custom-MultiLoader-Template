@@ -67,15 +67,11 @@ minecraft {
     }
 }
 
-sourceSets.main.resources {
-    srcDirs += project(":forge").file("src/main/resources")
-    srcDirs += project(":forge").file("src/main/generated/resources")
-}
+sourceSets.main.resources { srcDir 'src/generated/resources' }
 
 dependencies {
     minecraft "net.neoforged:forge:${minecraft_version}-${neo_version}"
     compileOnly project(":common")
-    implementation project(":forge") transitive(false)
     annotationProcessor("org.spongepowered:mixin:0.8.5:processor")
 }
 
