@@ -76,7 +76,7 @@ subprojects {
         repositories {
             if (providers.environmentVariable("MAVEN_TOKEN").orNull) {
                 maven {
-                    url "${nanite_maven_url}${isSnapshot ? 'snapshots' : 'releases'}"
+                    url "${maven_url}${isSnapshot ? 'snapshots' : 'releases'}"
                     credentials {
                         username = "admin"
                         password = providers.environmentVariable("MAVEN_TOKEN").get()
