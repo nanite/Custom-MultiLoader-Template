@@ -86,6 +86,26 @@ subprojects {
             }
         }
     }
+
+    if (project.name != "common") {
+        tasks.withType(JavaCompile).configureEach {
+            if (!it.name.toLowerCase().contains("test")) {
+                source(project(":common").sourceSets.main.allSource)
+            }
+        }
+
+        tasks.withType(Javadoc).configureEach {
+            source(project(":common").sourceSets.main.allJava)
+        }
+
+        tasks.named("sourcesJar", Jar) {
+            from(project(":common").sourceSets.main.allSource)
+        }
+
+        processResources {
+            from project(":common").sourceSets.main.resources
+        }
+    }
 }
 
 publishMods {
