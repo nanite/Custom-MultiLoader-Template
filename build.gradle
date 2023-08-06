@@ -61,7 +61,6 @@ subprojects {
 
     processResources {
         filesMatching(['pack.mcmeta', 'fabric.mod.json', 'META-INF/mods.toml', 'mods.toml', '*.mixins.json']) {
-            println(project.properties.mod_name)
             expand project.properties
         }
     }
