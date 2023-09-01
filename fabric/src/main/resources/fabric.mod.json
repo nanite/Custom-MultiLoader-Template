@@ -10,7 +10,7 @@
     "contact": {
         "homepage": "${homepage}",
         "sources": "${source}",
-        "issues": "${source}/issues",
+        "issues": "${issues}",
         "discord": "${discord}",
         "curseforge": "${curseforge_page}",
         "modrinth": "${modrinth_page}"
